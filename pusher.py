@@ -1,7 +1,4 @@
 import sys
-
-from twisted.internet import reactor
-from twisted.python import log
 import json
 
 from autobahn.twisted.websocket import WebSocketClientFactory, \
@@ -38,14 +35,15 @@ class Channel:
         self.pusher = pusher
         self.name = name
         self.subscribed = False
-        self.handler = None
+        self.events = {}
 
-    def on_event(self, handler):
-        self.handler = handler
+    def bind(self, event, handler):
+        self.events[event] = handler
 
     def _emit(self, channel, event, data):
-        if callable(self.handler):
-            self.handler(channel, event, data)
+        handler = self.events.get(event)
+        if callable(handler):
+            handler(channel, event, data)
 
 class Pusher:
     def __init__(self, app_key):
@@ -100,17 +98,4 @@ class Pusher:
             data = {}
         payload = {"event":event, "data":data}
         self.factory.singleton.sendMessage(json.dumps(payload), False)
-
-if __name__ == '__main__':
-    log.startLogging(sys.stdout)
-    pusher = Pusher(sys.argv[1])
-    def foo(event, data):
-        channel = pusher.subscribe("channel_name")
-
-        def bar(channel, event, data):
-            print "data:", data
-
-        channel.on_event(bar)
-    pusher.on("pusher:connection_established", foo)
-    reactor.run()
 
