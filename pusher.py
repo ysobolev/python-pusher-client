@@ -54,13 +54,14 @@ class Pusher:
         self.factory.protocol = PusherProtocol
         self.factory.singleton = None
         self.factory.pusher = self
+        self.on("pusher:ping", self.on_ping)
         connectWS(self.factory)
 
     def on_subscription_succeded(self, data):
         channel = self.channels.setdefault(name, Channel(self, name))
         channel.subscribed = True
 
-    def on_ping(self, data):
+    def on_ping(self, event, data):
         self.send("pusher:pong")
 
     def subscribe(self, name, auth=None, channel_data=None):
