@@ -45,7 +45,7 @@ class Channel:
         if callable(handler):
             handler(channel, event, data)
 
-class Pusher:
+class PusherClient:
     def __init__(self, app_key):
         self.app_key = app_key
         self.events = {}

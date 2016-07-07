@@ -6,8 +6,8 @@ Autobahn backed python pusher client
     from twisted.internet import reactor
     from twisted.python import log
 
-    from pusher import Pusher
-    bitstamp = Pusher("de504dc5763aeef9ff52")
+    from pusher_client import PusherClient
+    bitstamp = PusherClient("de504dc5763aeef9ff52")
     
     def run(event, data):
         def on_data(channel, event, data):
